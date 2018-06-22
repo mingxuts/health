@@ -1,6 +1,5 @@
 '''
 Created on Jun 21, 2018
-
 @author: longgu
 '''
 
@@ -70,6 +69,20 @@ def model_embedding(dataframe,words_vecmap,dictionary,stop_words):
         ls.append(sentence_avg(i,words_vecmap,dictionary,stop_words))
     
     return np.array(ls)
+ 
+def model_tfidf(dataframe):
+  text = dataframe['Published Event Description (DAEN)'].values
+  vectorizer = TfidfVectorizer(ngram_range=(1,1))
+  vectorizer.fit(text)
+  print(vectorizer.vocabulary_)
+  print(vectorizer.idf_)
+  # encode document
+  vector = vectorizer.transform(text)
+  # summarize encoded vector
+  print(vector.shape)
+  return vector.toarray()
+  
+  
 
 if __name__ == "__main__":
     
@@ -81,14 +94,17 @@ if __name__ == "__main__":
     
     data_df = data_processing()
     
-    data_df_test = data_df
+    data_df_test = data_df.head(10)
      
-    words, words_vecmap = read_glove_vecs('../data/glove.6B.50d.txt')
-    dictionary = list(words_vecmap.keys())
+#     words, words_vecmap = read_glove_vecs('../data/glove.6B.50d.txt')
+#     dictionary = list(words_vecmap.keys())
+
+    
     
     print("loading word vec")
     
-    X = model_embedding(data_df_test,words_vecmap,dictionary,stop_words)
+    #X = model_embedding(data_df_test,words_vecmap,dictionary,stop_words)
+    X = model_tfidf(data_df_test)
     print( X )
     print(X.shape)
     y = data_df_test.Investigated.astype(int)
